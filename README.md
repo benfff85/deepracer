@@ -16,7 +16,7 @@ A reward modifier is simply a function that takes in inputs including the curren
 
 ### Inventory
 
-| # | Modifier                | Type  | Description                                                                                                                                                                                   |
-|---|-------------------------|-------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 1 | calculate_speed_reward  | Fixed | Simple reward for speed, adds a multiple of the current speed. Ideally would replace this by something more dynamic that rewards based on proximity of actual speed to an input target speed. |
+| # | Modifier                | Type      | Waypoint Filtering | Description                                                                                                                                                                                                                                             |
+|---|-------------------------|-----------|--------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 1 | calculate_speed_reward  | Multiplier| Yes                | Rewards based on speed. The function is provided a target speed and rewardable speed range. If the current speed is within target speed +/- range, the reward will have a multiplier applied linearly proportional to the proximity to the target speed.|
 
