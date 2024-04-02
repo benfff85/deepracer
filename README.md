@@ -1,5 +1,8 @@
-# DeepRacer
-Deep Chasers repository for AWS DeepRacer
+<div align="center">
+    <h1>DeepRacer</h1>
+    <p>Deep Chasers repository for AWS DeepRacer</p>
+    <img src="https://d1.awsstatic.com/deepracer/DRL%20Logo%20web%20500px.2b6ea0add11b4cf83314b39d3d7d6ab63d7fdff9.png" alt="AWS DeepRacer League Logo" width="250">
+</div>
 
 ## Reward Modifiers
 
