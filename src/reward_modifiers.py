@@ -31,6 +31,11 @@ def terminal_reversed_check(params):
         raise TerminalConditionException
 
 
+def terminal_max_steps_check(params):
+    if params['steps'] >= Settings.max_steps:
+        raise TerminalConditionException
+
+
 class InvalidInputException(Exception):
     pass
 
@@ -41,3 +46,4 @@ class TerminalConditionException(Exception):
 
 class Settings:
     terminal_reward = .001
+    max_steps = 1000

@@ -1,7 +1,7 @@
 import unittest
 
 from reward_modifiers import calculate_speed_reward, InvalidInputException, terminal_off_track_check, Settings, \
-    TerminalConditionException, terminal_reversed_check
+    TerminalConditionException, terminal_reversed_check, terminal_max_steps_check
 
 
 class TestRewardModifiers(unittest.TestCase):
@@ -46,6 +46,13 @@ class TestRewardModifiers(unittest.TestCase):
             terminal_reversed_check(params={'is_reversed': True})
         # Check no exception raised when not reversed
         terminal_reversed_check(params={'is_reversed': False})
+
+    def test_terminal_max_steps_check(self):
+        # Check exception raised when max steps reached
+        with self.assertRaises(TerminalConditionException):
+            terminal_max_steps_check(params={'steps': Settings.max_steps})
+        # Check no exception raised when not max steps reached
+        terminal_max_steps_check(params={'steps': Settings.max_steps - 1})
 
 
 if __name__ == '__main__':
