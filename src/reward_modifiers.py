@@ -27,6 +27,12 @@ def terminal_off_track_reward(params, initial_reward):
     return initial_reward
 
 
+def terminal_reversed_reward(params, initial_reward):
+    if params['is_reversed']:
+        return float(Settings.terminal_reward)
+    return initial_reward
+
+
 class InvalidInput(Exception):
     pass
 

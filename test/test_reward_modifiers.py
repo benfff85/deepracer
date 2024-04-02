@@ -1,6 +1,7 @@
 import unittest
 
-from reward_modifiers import calculate_speed_reward, InvalidInput, terminal_off_track_reward
+from reward_modifiers import calculate_speed_reward, InvalidInput, terminal_off_track_reward, terminal_reversed_reward, \
+    Settings
 
 
 class TestRewardModifiers(unittest.TestCase):
@@ -34,9 +35,15 @@ class TestRewardModifiers(unittest.TestCase):
 
     def test_terminal_off_track_reward(self):
         # If off track return terminal reward
-        self.assertEqual(0.001, terminal_off_track_reward(params={'is_offtrack': True}, initial_reward=1))
+        self.assertEqual(Settings.terminal_reward, terminal_off_track_reward(params={'is_offtrack': True}, initial_reward=1))
         # Otherwise return initial reward
         self.assertEqual(1, terminal_off_track_reward(params={'is_offtrack': False}, initial_reward=1))
+
+    def test_terminal_reversed_reward(self):
+        # If reversed return terminal reward
+        self.assertEqual(Settings.terminal_reward, terminal_reversed_reward(params={'is_reversed': True}, initial_reward=1))
+        # Otherwise return initial reward
+        self.assertEqual(1, terminal_reversed_reward(params={'is_reversed': False}, initial_reward=1))
 
 
 if __name__ == '__main__':
