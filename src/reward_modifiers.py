@@ -6,7 +6,7 @@ def calculate_speed_reward(params, initial_reward, waypoints, target_speed, rewa
         return initial_reward
 
     if max_reward_multiplier < 1:
-        raise InvalidInput('Max reward multiplier must be greater than 1')
+        raise InvalidInputException('Max reward multiplier must be greater than 1')
 
     speed = params['speed']
     speed_diff = abs(speed - target_speed)
@@ -21,19 +21,21 @@ def calculate_speed_reward(params, initial_reward, waypoints, target_speed, rewa
     return new_reward
 
 
-def terminal_off_track_reward(params, initial_reward):
+def terminal_off_track_check(params):
     if params['is_offtrack']:
-        return float(Settings.terminal_reward)
-    return initial_reward
+        raise TerminalConditionException
 
 
-def terminal_reversed_reward(params, initial_reward):
+def terminal_reversed_check(params):
     if params['is_reversed']:
-        return float(Settings.terminal_reward)
-    return initial_reward
+        raise TerminalConditionException
 
 
-class InvalidInput(Exception):
+class InvalidInputException(Exception):
+    pass
+
+
+class TerminalConditionException(Exception):
     pass
 
 

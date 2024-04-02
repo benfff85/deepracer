@@ -1,7 +1,7 @@
 import unittest
 
-from reward_modifiers import calculate_speed_reward, InvalidInput, terminal_off_track_reward, terminal_reversed_reward, \
-    Settings
+from reward_modifiers import calculate_speed_reward, InvalidInputException, terminal_off_track_check, Settings, \
+    TerminalConditionException, terminal_reversed_check
 
 
 class TestRewardModifiers(unittest.TestCase):
@@ -30,20 +30,22 @@ class TestRewardModifiers(unittest.TestCase):
         self.assertEqual(1, calculate_speed_reward(params={'speed': 5, 'closest_waypoints': [0]}, initial_reward=1, waypoints={0}, target_speed=10, rewardable_speed_range=2, max_reward_multiplier=10))
 
         # If max reward multiplier is < 1 InvalidInput should be raised
-        with self.assertRaises(InvalidInput):
+        with self.assertRaises(InvalidInputException):
             calculate_speed_reward(params={'speed': 5, 'closest_waypoints': [0]}, initial_reward=1, waypoints={0}, target_speed=5, rewardable_speed_range=10, max_reward_multiplier=0.9)
 
-    def test_terminal_off_track_reward(self):
-        # If off track return terminal reward
-        self.assertEqual(Settings.terminal_reward, terminal_off_track_reward(params={'is_offtrack': True}, initial_reward=1))
-        # Otherwise return initial reward
-        self.assertEqual(1, terminal_off_track_reward(params={'is_offtrack': False}, initial_reward=1))
+    def test_terminal_off_track_check(self):
+        # Check exception raised when off track
+        with self.assertRaises(TerminalConditionException):
+            terminal_off_track_check(params={'is_offtrack': True})
+        # Check no exception raised when on track
+        terminal_off_track_check(params={'is_offtrack': False})
 
-    def test_terminal_reversed_reward(self):
-        # If reversed return terminal reward
-        self.assertEqual(Settings.terminal_reward, terminal_reversed_reward(params={'is_reversed': True}, initial_reward=1))
-        # Otherwise return initial reward
-        self.assertEqual(1, terminal_reversed_reward(params={'is_reversed': False}, initial_reward=1))
+    def test_terminal_reversed_check(self):
+        # Check exception raised when reversed
+        with self.assertRaises(TerminalConditionException):
+            terminal_reversed_check(params={'is_reversed': True})
+        # Check no exception raised when not reversed
+        terminal_reversed_check(params={'is_reversed': False})
 
 
 if __name__ == '__main__':
