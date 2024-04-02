@@ -21,6 +21,27 @@ def calculate_speed_reward(params, initial_reward, waypoints, target_speed, rewa
     return new_reward
 
 
+def calculate_steering_angle_reward(params, initial_reward, waypoints, target_angle, rewardable_angle_range, max_reward_multiplier):
+
+    if params['closest_waypoints'][0] not in waypoints:
+        return initial_reward
+
+    if max_reward_multiplier < 1:
+        raise InvalidInputException('Max reward multiplier must be greater than 1')
+
+    steeringAngle = params['steering_angle']
+    angle_diff = abs(steeringAngle - target_angle)
+
+    if angle_diff >= rewardable_angle_range:
+        return initial_reward
+
+    percent_of_max_multiplier = (rewardable_angle_range - angle_diff) / rewardable_angle_range
+    new_reward = initial_reward * (1 + (max_reward_multiplier - 1) * percent_of_max_multiplier)
+    print(f'Reward: {initial_reward} -> {new_reward}, Angle: {steeringAngle}, Target Angle: {target_angle}, Rewardable Angle Range: {rewardable_angle_range}, Max Reward Multiplier: {max_reward_multiplier}')
+
+    return new_reward
+
+
 def terminal_off_track_check(params):
     if params['is_offtrack']:
         raise TerminalConditionException
