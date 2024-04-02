@@ -30,7 +30,7 @@ A reward modifier is simply a function that takes in inputs including the curren
 | 101 | terminal_reversed_reward        | Absolute   | NA                 | Set reward to low value if the car is in a reversed orientation                                                                                                                                                                                                                                              |
 | 102 | terminal_max_steps_check        | Absolute   | NA                 | Set reward to low value if the number of steps has exceeded a pre-defined maximum                                                                                                                                                                                                                            |
 
-### Waypoint Helper
+## Waypoint Helper
 
 A class designed to make generating collections of waypoints cleaner. All functions that deal with waypoints expect a list of individual waypoints. 
 
