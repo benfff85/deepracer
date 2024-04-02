@@ -1,7 +1,7 @@
 import unittest
 
 from reward_modifiers import calculate_speed_reward, InvalidInputException, terminal_off_track_check, Settings, \
-    TerminalConditionException, terminal_reversed_check, terminal_max_steps_check
+    TerminalConditionException, terminal_reversed_check, terminal_max_steps_check, WaypointHelper
 
 
 class TestRewardModifiers(unittest.TestCase):
@@ -53,6 +53,17 @@ class TestRewardModifiers(unittest.TestCase):
             terminal_max_steps_check(params={'steps': Settings.max_steps})
         # Check no exception raised when not max steps reached
         terminal_max_steps_check(params={'steps': Settings.max_steps - 1})
+
+    def test_waypoint_helper_generate_waypoints(self):
+        test_cases = [
+            ("1:10", [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+            ("2:4,6:8", [2, 3, 4, 6, 7, 8]),
+            ("1:4,7,9", [1, 2, 3, 4, 7, 9])
+        ]
+
+        for case, expected in test_cases:
+            result = WaypointHelper.generate_waypoints(case)
+            self.assertEqual(expected, result)
 
 
 if __name__ == '__main__':

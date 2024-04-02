@@ -47,3 +47,18 @@ class TerminalConditionException(Exception):
 class Settings:
     terminal_reward = .001
     max_steps = 1000
+
+
+class WaypointHelper:
+
+    @staticmethod
+    def generate_waypoints(waypoint_str):
+        waypoints = []
+        ranges = waypoint_str.split(',')
+        for r in ranges:
+            if ':' in r:
+                start, end = map(int, r.split(':'))
+                waypoints.extend(range(start, end + 1))
+            else:
+                waypoints.append(int(r))
+        return waypoints

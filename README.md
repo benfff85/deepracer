@@ -29,3 +29,17 @@ A reward modifier is simply a function that takes in inputs including the curren
 | 100 | terminal_off_track_reward       | Absolute   | NA                 | Set reward to low value if the car has driven off track                                                                                                                                                                                                                                                      |
 | 101 | terminal_reversed_reward        | Absolute   | NA                 | Set reward to low value if the car is in a reversed orientation                                                                                                                                                                                                                                              |
 | 102 | terminal_max_steps_check        | Absolute   | NA                 | Set reward to low value if the number of steps has exceeded a pre-defined maximum                                                                                                                                                                                                                            |
+
+### Waypoint Helper
+
+A class designed to make generating collections of waypoints cleaner. All functions that deal with waypoints expect a list of individual waypoints. 
+
+This class exposes a `generate_waypoints(str)` method that will take string representing the waypoints and return the list of waypoints.
+
+Examples
+
+| String    | Waypoints            |
+|-----------|----------------------|
+| 1:10      | 1,2,3,4,5,6,7,8,9,10 |
+| 2:4,6:8   | 2,3,4,6,7,8          |
+| 1:4,7,9   | 1,2,3,4,7,9          |
