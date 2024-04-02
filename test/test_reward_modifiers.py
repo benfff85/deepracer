@@ -1,6 +1,6 @@
 import unittest
 
-from reward_modifiers import calculate_speed_reward, InvalidInput
+from reward_modifiers import calculate_speed_reward, InvalidInput, terminal_off_track_reward
 
 
 class TestRewardModifiers(unittest.TestCase):
@@ -31,6 +31,12 @@ class TestRewardModifiers(unittest.TestCase):
         # If max reward multiplier is < 1 InvalidInput should be raised
         with self.assertRaises(InvalidInput):
             calculate_speed_reward(params={'speed': 5, 'closest_waypoints': [0]}, initial_reward=1, waypoints={0}, target_speed=5, rewardable_speed_range=10, max_reward_multiplier=0.9)
+
+    def test_terminal_off_track_reward(self):
+        # If off track return terminal reward
+        self.assertEqual(0.001, terminal_off_track_reward(params={'is_offtrack': True}, initial_reward=1))
+        # Otherwise return initial reward
+        self.assertEqual(1, terminal_off_track_reward(params={'is_offtrack': False}, initial_reward=1))
 
 
 if __name__ == '__main__':

@@ -21,5 +21,15 @@ def calculate_speed_reward(params, initial_reward, waypoints, target_speed, rewa
     return new_reward
 
 
+def terminal_off_track_reward(params, initial_reward):
+    if params['is_offtrack']:
+        return float(Settings.terminal_reward)
+    return initial_reward
+
+
 class InvalidInput(Exception):
     pass
+
+
+class Settings:
+    terminal_reward = .001
