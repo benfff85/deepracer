@@ -2,7 +2,7 @@ import unittest
 
 from reward_modifiers import calculate_speed_reward, InvalidInputException, terminal_off_track_check, Settings, \
     TerminalConditionException, terminal_reversed_check, terminal_max_steps_check, WaypointHelper, \
-    calculate_steering_angle_reward, calculate_side_of_track_reward
+    calculate_steering_angle_reward, calculate_side_of_track_reward, calculate_steering_direction_reward
 
 
 class TestRewardModifiers(unittest.TestCase):
@@ -59,6 +59,24 @@ class TestRewardModifiers(unittest.TestCase):
         # If max reward multiplier is < 1 InvalidInput should be raised
         with self.assertRaises(InvalidInputException):
             calculate_steering_angle_reward(params={'steering_angle': 5, 'closest_waypoints': [0]}, initial_reward=1, waypoints={0}, target_angle=5, rewardable_angle_range=10, max_reward_multiplier=0.9)
+
+
+    def test_calculate_steering_direction_reward(self):
+
+        # If outside targeted waypoints just return initial reward
+        self.assertEqual(1, calculate_steering_direction_reward(params={'steering_angle': 5, 'closest_waypoints': [0]}, initial_reward=1, waypoints={1}, target_direction='left', reward_multiplier=20))
+
+        # If turning the desired direction, apply the reward multiplier
+        self.assertEqual(20, calculate_steering_direction_reward(params={'steering_angle': 5, 'closest_waypoints': [0]}, initial_reward=1, waypoints={0}, target_direction='left', reward_multiplier=20))
+        self.assertEqual(20, calculate_steering_direction_reward(params={'steering_angle': -5, 'closest_waypoints': [0]}, initial_reward=1, waypoints={0}, target_direction='right', reward_multiplier=20))
+
+        # If not turning the desired direction, do not apply the reward multiplier
+        self.assertEqual(1, calculate_steering_direction_reward(params={'steering_angle': 5, 'closest_waypoints': [0]}, initial_reward=1, waypoints={0}, target_direction='right', reward_multiplier=20))
+        self.assertEqual(1, calculate_steering_direction_reward(params={'steering_angle': -5, 'closest_waypoints': [0]}, initial_reward=1, waypoints={0}, target_direction='left', reward_multiplier=20))
+
+        # If max reward multiplier is < 1 InvalidInput should be raised
+        with self.assertRaises(InvalidInputException):
+            calculate_steering_direction_reward(params={'steering_angle': -5, 'closest_waypoints': [0]}, initial_reward=1, waypoints={0}, target_direction='left', reward_multiplier=0.9)
 
 
     def test_calculate_side_of_track_reward(self):
