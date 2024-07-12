@@ -2,7 +2,8 @@ import unittest
 
 from reward_modifiers import calculate_speed_reward, InvalidInputException, terminal_off_track_check, Settings, \
     TerminalConditionException, terminal_reversed_check, terminal_max_steps_check, WaypointHelper, \
-    calculate_steering_angle_reward, calculate_side_of_track_reward, calculate_steering_direction_reward
+    calculate_steering_angle_reward, calculate_side_of_track_reward, calculate_steering_direction_reward, \
+    terminal_wheel_off_track_check
 
 
 class TestRewardModifiers(unittest.TestCase):
@@ -115,6 +116,15 @@ class TestRewardModifiers(unittest.TestCase):
             terminal_off_track_check(params={'is_offtrack': True})
         # Check no exception raised when on track
         terminal_off_track_check(params={'is_offtrack': False})
+
+
+    def test_terminal_wheel_off_track_check(self):
+        # Check exception raised when off track
+        with self.assertRaises(TerminalConditionException):
+            terminal_wheel_off_track_check(params={'all_wheels_on_track': False})
+        # Check no exception raised when on track
+        terminal_wheel_off_track_check(params={'all_wheels_on_track': True})
+
 
     def test_terminal_reversed_check(self):
         # Check exception raised when reversed

@@ -3,6 +3,7 @@ def reward_function(params):
     # Check Terminal Conditions
     try:
         terminal_off_track_check(params)
+        terminal_wheel_off_track_check(params)
         terminal_reversed_check(params)
         terminal_max_steps_check(params)
     except TerminalConditionException:
@@ -129,6 +130,12 @@ def terminal_off_track_check(params):
         raise TerminalConditionException
 
 
+def terminal_wheel_off_track_check(params):
+    if not params['all_wheels_on_track']:
+        print('Wheels off track!')
+        raise TerminalConditionException
+
+
 def terminal_reversed_check(params):
     if params['is_reversed']:
         print('Reversed!')
@@ -151,7 +158,7 @@ class TerminalConditionException(Exception):
 
 class Settings:
     terminal_reward = 1e-3
-    max_steps = 1000
+    max_steps = 300
 
 
 class WaypointHelper:
