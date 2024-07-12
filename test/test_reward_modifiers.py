@@ -2,7 +2,7 @@ import unittest
 
 from reward_modifiers import calculate_speed_reward, InvalidInputException, terminal_off_track_check, Settings, \
     TerminalConditionException, terminal_reversed_check, terminal_max_steps_check, WaypointHelper, \
-    calculate_steering_angle_reward
+    calculate_steering_angle_reward, calculate_side_of_track_reward
 
 
 class TestRewardModifiers(unittest.TestCase):
@@ -34,6 +34,7 @@ class TestRewardModifiers(unittest.TestCase):
         with self.assertRaises(InvalidInputException):
             calculate_speed_reward(params={'speed': 5, 'closest_waypoints': [0]}, initial_reward=1, waypoints={0}, target_speed=5, rewardable_speed_range=10, max_reward_multiplier=0.9)
 
+
     def test_calculate_steering_angle_reward(self):
 
         # If outside targeted waypoints just return initial reward
@@ -58,6 +59,36 @@ class TestRewardModifiers(unittest.TestCase):
         # If max reward multiplier is < 1 InvalidInput should be raised
         with self.assertRaises(InvalidInputException):
             calculate_steering_angle_reward(params={'steering_angle': 5, 'closest_waypoints': [0]}, initial_reward=1, waypoints={0}, target_angle=5, rewardable_angle_range=10, max_reward_multiplier=0.9)
+
+
+    def test_calculate_side_of_track_reward(self):
+
+        # If outside targeted waypoints just return initial reward
+        self.assertEqual(1, calculate_side_of_track_reward(params={'closest_waypoints': [0]}, initial_reward=1, waypoints={1}, target_third_of_track='left', reward_multiplier=10))
+
+        # If targeting left and in left reward is multiplied
+        self.assertEqual(10, calculate_side_of_track_reward(params={'closest_waypoints': [0], 'is_left_of_center': True, 'track_width': 100, 'distance_from_center': 45}, initial_reward=1, waypoints={0}, target_third_of_track='left', reward_multiplier=10))
+
+        # If targeting left and in either middle or right do not reward
+        self.assertEqual(1, calculate_side_of_track_reward(params={'closest_waypoints': [0], 'is_left_of_center': False, 'track_width': 100, 'distance_from_center': 45}, initial_reward=1, waypoints={0}, target_third_of_track='left', reward_multiplier=10))
+        self.assertEqual(1, calculate_side_of_track_reward(params={'closest_waypoints': [0], 'is_left_of_center': True, 'track_width': 100, 'distance_from_center': 0}, initial_reward=1, waypoints={0}, target_third_of_track='left', reward_multiplier=10))
+
+        # If targeting middle and in middle reward is multiplied
+        self.assertEqual(10, calculate_side_of_track_reward(params={'closest_waypoints': [0], 'is_left_of_center': True, 'track_width': 100, 'distance_from_center': 5}, initial_reward=1, waypoints={0}, target_third_of_track='middle', reward_multiplier=10))
+
+        # If targeting middle and in either left or right do not reward
+        self.assertEqual(1, calculate_side_of_track_reward(params={'closest_waypoints': [0], 'is_left_of_center': False, 'track_width': 100, 'distance_from_center': 45}, initial_reward=1, waypoints={0}, target_third_of_track='middle', reward_multiplier=10))
+        self.assertEqual(1, calculate_side_of_track_reward(params={'closest_waypoints': [0], 'is_left_of_center': True, 'track_width': 100, 'distance_from_center': 45}, initial_reward=1, waypoints={0}, target_third_of_track='middle', reward_multiplier=10))
+
+        # If targeting right and in right reward is multiplied
+        self.assertEqual(10, calculate_side_of_track_reward(params={'closest_waypoints': [0], 'is_left_of_center': False, 'track_width': 100, 'distance_from_center': 45}, initial_reward=1, waypoints={0}, target_third_of_track='right', reward_multiplier=10))
+
+        # If targeting right and in either left or middle do not reward
+        self.assertEqual(1, calculate_side_of_track_reward(params={'closest_waypoints': [0], 'is_left_of_center': False, 'track_width': 100, 'distance_from_center': 5}, initial_reward=1, waypoints={0}, target_third_of_track='right', reward_multiplier=10))
+        self.assertEqual(1, calculate_side_of_track_reward(params={'closest_waypoints': [0], 'is_left_of_center': True, 'track_width': 100, 'distance_from_center': 45}, initial_reward=1, waypoints={0}, target_third_of_track='right', reward_multiplier=10))
+
+        with self.assertRaises(InvalidInputException):
+            calculate_side_of_track_reward(params={'closest_waypoints': [0]}, initial_reward=1, waypoints={0}, target_third_of_track='left', reward_multiplier=0.9)
 
 
     def test_terminal_off_track_check(self):
