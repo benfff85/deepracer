@@ -15,19 +15,21 @@ def reward_function(params):
     reward = calculate_speed_reward(params, reward, WaypointHelper.generate_waypoints("0:155"), 5, 5, 10)
 
     # Turning Left Areas
-    reward = calculate_steering_angle_reward(params, reward, WaypointHelper.generate_waypoints("6:20,40:52,94:106,130:138"), 15, 15, 2)
+    # reward = calculate_steering_angle_reward(params, reward, WaypointHelper.generate_waypoints("6:20,40:52,94:106,130:138"), 15, 15, 2)
+    reward = calculate_steering_direction_reward(params, reward, WaypointHelper.generate_waypoints("6:20,40:52,94:106,130:138"), 'left', 2)
 
     # Turning Right Areas
-    reward = calculate_steering_angle_reward(params, reward, WaypointHelper.generate_waypoints("66:78"), -15, 15, 2)
+    # reward = calculate_steering_angle_reward(params, reward, WaypointHelper.generate_waypoints("66:78"), -15, 15, 2)
+    reward = calculate_steering_direction_reward(params, reward, WaypointHelper.generate_waypoints("66:78"), 'right', 2)
 
     # Left Third Of Track Areas
-    reward = calculate_side_of_track_reward(params, reward, WaypointHelper.generate_waypoints("10:18,32:52,94:106,130:140"), 'left', 2)
+    reward = calculate_side_of_track_reward(params, reward, WaypointHelper.generate_waypoints("10:18,32:52,94:106,130:140"), 'left', 5)
 
     # Middle Third Of Track Areas
-    reward = calculate_side_of_track_reward(params, reward, WaypointHelper.generate_waypoints("0:4,114:122,142:154"), 'middle', 2)
+    reward = calculate_side_of_track_reward(params, reward, WaypointHelper.generate_waypoints("0:4,114:122,142:154"), 'middle', 5)
 
     # Right Third Of Track Areas
-    reward = calculate_side_of_track_reward(params, reward, WaypointHelper.generate_waypoints("64:78"), 'right', 2)
+    reward = calculate_side_of_track_reward(params, reward, WaypointHelper.generate_waypoints("64:78"), 'right', 5)
 
     return float(reward)
 
@@ -60,17 +62,36 @@ def calculate_steering_angle_reward(params, initial_reward, waypoints, target_an
     if max_reward_multiplier < 1:
         raise InvalidInputException('Max reward multiplier must be greater than 1')
 
-    steeringAngle = params['steering_angle']
-    angle_diff = abs(steeringAngle - target_angle)
+    steering_angle = params['steering_angle']
+    angle_diff = abs(steering_angle - target_angle)
 
     if angle_diff >= rewardable_angle_range:
         return initial_reward
 
     percent_of_max_multiplier = (rewardable_angle_range - angle_diff) / rewardable_angle_range
     new_reward = initial_reward * (1 + (max_reward_multiplier - 1) * percent_of_max_multiplier)
-    print(f'Reward: {initial_reward} -> {new_reward}, Angle: {steeringAngle}, Target Angle: {target_angle}, Rewardable Angle Range: {rewardable_angle_range}, Max Reward Multiplier: {max_reward_multiplier}')
+    print(f'Reward: {initial_reward} -> {new_reward}, Angle: {steering_angle}, Target Angle: {target_angle}, Rewardable Angle Range: {rewardable_angle_range}, Max Reward Multiplier: {max_reward_multiplier}')
 
     return new_reward
+
+
+def calculate_steering_direction_reward(params, initial_reward, waypoints, target_direction, reward_multiplier):
+
+    if params['closest_waypoints'][0] not in waypoints:
+        return initial_reward
+
+    if reward_multiplier < 1:
+        raise InvalidInputException('Reward multiplier must be greater than 1')
+
+    steering_angle = params['steering_angle']
+
+    new_reward = initial_reward
+    if (steering_angle > 0 and target_direction == 'left') or (steering_angle < 0 and target_direction == 'right'):
+        new_reward *= reward_multiplier
+
+    print(f'Reward: {initial_reward} -> {new_reward}, Angle: {steering_angle}, Target Direction: {target_direction}, Reward Multiplier: {reward_multiplier}')
+
+    return float(new_reward)
 
 
 def calculate_side_of_track_reward(params, initial_reward, waypoints, target_third_of_track, reward_multiplier):
